@@ -17,10 +17,10 @@ object AverageHousePriceSolution {
 
     val housePriceTotal = housePricePairRdd.reduceByKey((x, y) => (x._1 + y._1, x._2 + y._2))
 
-    println("housePriceTotal: ")
+    println("housePriceTotal: total=(cant,sum of price)")
     for ((bedroom, total) <- housePriceTotal.collect()) println(bedroom + " : " + total)
 
-    val housePriceAvg = housePriceTotal.mapValues(avgCount => avgCount._2 / avgCount._1)
+    val housePriceAvg = housePriceTotal.mapValues(total => total._2 / total._1)
     println("housePriceAvg: ")
     for ((bedroom, avg) <- housePriceAvg.collect()) println(bedroom + " : " + avg)
   }
