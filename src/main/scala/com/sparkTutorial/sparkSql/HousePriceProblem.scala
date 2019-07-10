@@ -1,5 +1,11 @@
 package com.sparkTutorial.sparkSql
 
+import com.sparkTutorial.sparkSql.HousePriceSolution.PRICE_SQ_FT
+import com.sparkTutorial.sparkSql.StackOverFlowSurvey.{AGE_MIDPOINT, SALARY_MIDPOINT, SALARY_MIDPOINT_BUCKET}
+import org.apache.log4j.{Level, Logger}
+import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions.desc
+
 
 object HousePriceProblem {
 
@@ -37,4 +43,67 @@ object HousePriceProblem {
         |................|.................|
         |................|.................|
          */
+
+  def main(args: Array[String]) {
+
+    Logger.getLogger("org").setLevel(Level.ERROR)
+    val session = SparkSession.builder().appName("HousePriceProblemy").master("local[1]").getOrCreate()
+
+    val dataFrameReader = session.read
+
+    val responses = dataFrameReader
+      .option("header", "true")
+      .option("inferSchema", value = true)
+      .csv("in/RealEstate.csv")
+
+    System.out.println("=== Print out schema ===")
+    responses.printSchema()
+
+    val responseWithSelectedColumns = responses.select("Location", "Price SQ Ft")
+
+//    System.out.println("=== Print the selected columns of the table ===")
+//    responseWithSelectedColumns.show()
+//
+//    System.out.println("=== Group by Location and calculate the avg Price SQ Ft ===")
+//    val datasetGroupByLocation = responseWithSelectedColumns.groupBy("Location")
+//    datasetGroupByLocation.avg("Price SQ Ft").show()
+
+
+    responseWithSelectedColumns.groupBy("Location")
+      .avg("Price SQ Ft")
+      .orderBy(desc("avg(Price SQ Ft)"))
+      .show()
+
+
+    //    System.out.println("=== Print the selected columns of the table ===")
+    //    responseWithSelectedColumns.show()
+    //
+    //    System.out.println("=== Print records where the response is from Argentina ===")
+    //    responseWithSelectedColumns.filter(responseWithSelectedColumns.col("country").===("Argentina")).show()
+    //
+    //    System.out.println("=== Print the count of occupations ===")
+    //    val groupedDataset = responseWithSelectedColumns.groupBy("occupation")
+    //    groupedDataset.count().show()
+    //
+    //    System.out.println("=== Print records with average mid age less than 20 ===")
+    //    responseWithSelectedColumns.filter(responseWithSelectedColumns.col(AGE_MIDPOINT) < 20).show()
+    //
+    //    System.out.println("=== Print the result by salary middle point in descending order ===")
+    //    responseWithSelectedColumns.orderBy(responseWithSelectedColumns.col(SALARY_MIDPOINT).desc).show()
+    //
+    //    System.out.println("=== Group by country and aggregate by average salary middle point ===")
+    //    val datasetGroupByCountry = responseWithSelectedColumns.groupBy("country")
+    //    datasetGroupByCountry.avg(SALARY_MIDPOINT).show()
+    //
+    //    val responseWithSalaryBucket = responses.withColumn(SALARY_MIDPOINT_BUCKET,
+    //      responses.col(SALARY_MIDPOINT).divide(20000).cast("integer").multiply(20000))
+    //
+    //    System.out.println("=== With salary bucket column ===")
+    //    responseWithSalaryBucket.select(SALARY_MIDPOINT, SALARY_MIDPOINT_BUCKET).show()
+    //
+    //    System.out.println("=== Group by salary bucket ===")
+    //    responseWithSalaryBucket.groupBy(SALARY_MIDPOINT_BUCKET).count().orderBy(SALARY_MIDPOINT_BUCKET).show()
+
+    session.stop()
+  }
 }

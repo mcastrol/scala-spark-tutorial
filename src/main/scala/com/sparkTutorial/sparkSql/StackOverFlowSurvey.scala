@@ -29,8 +29,8 @@ object StackOverFlowSurvey {
     System.out.println("=== Print the selected columns of the table ===")
     responseWithSelectedColumns.show()
 
-    System.out.println("=== Print records where the response is from Afghanistan ===")
-    responseWithSelectedColumns.filter(responseWithSelectedColumns.col("country").===("Afghanistan")).show()
+    System.out.println("=== Print records where the response is from Argentina ===")
+    responseWithSelectedColumns.filter(responseWithSelectedColumns.col("country").===("Argentina")).show()
 
     System.out.println("=== Print the count of occupations ===")
     val groupedDataset = responseWithSelectedColumns.groupBy("occupation")
